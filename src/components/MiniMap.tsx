@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MiniMapProps {
   onLocationSelect: (location: { lat: number; lng: number }) => void;
@@ -10,9 +10,26 @@ const MiniMap = ({ onLocationSelect, selectedLocation, apiKey }: MiniMapProps) =
   const mapRef = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null);
+  const [isLoaded, setIsLoaded] = useState(!!window.google);
 
   useEffect(() => {
-    if (!mapRef.current || !window.google || mapInstanceRef.current) return;
+    if (window.google) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const checkGoogleMaps = setInterval(() => {
+      if (window.google) {
+        setIsLoaded(true);
+        clearInterval(checkGoogleMaps);
+      }
+    }, 100);
+
+    return () => clearInterval(checkGoogleMaps);
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded || !window.google || mapInstanceRef.current) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: 20, lng: 0 },
@@ -43,7 +60,7 @@ const MiniMap = ({ onLocationSelect, selectedLocation, apiKey }: MiniMapProps) =
         });
       }
     });
-  }, [onLocationSelect]);
+  }, [onLocationSelect, isLoaded]);
 
   useEffect(() => {
     if (!mapInstanceRef.current || !selectedLocation) return;
