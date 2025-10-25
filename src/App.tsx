@@ -14,12 +14,12 @@ const queryClient = new QueryClient();
 const App = () => {
   const [scores, setScores] = useState<number[]>([]);
   const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem("googleMapsApiKey") || "";
+    return sessionStorage.getItem("googleMapsApiKey") || "";
   });
 
   const handleSetApiKey = (key: string) => {
     setApiKey(key);
-    localStorage.setItem("googleMapsApiKey", key);
+    sessionStorage.setItem("googleMapsApiKey", key);
   };
 
   const resetGame = () => {
