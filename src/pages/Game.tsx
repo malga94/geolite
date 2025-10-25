@@ -44,7 +44,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
       Math.pow(guess.lat - actual.lat, 2) + Math.pow(guess.lng - actual.lng, 2)
     );
     // Simple scoring: closer = higher score (max 5000 points)
-    const score = Math.max(0, Math.floor(5000 - distance * 1000));
+    const score = Math.max(0, Math.floor(5000 - 5000*(1 - Math.exp(-0.1*distance))));
     return score;
   }, []);
 

@@ -62,7 +62,7 @@ const Index = () => {
                   <Target className="w-5 h-5 text-secondary" />
                 </div>
                 <div>
-                  <div className="font-semibold">5 Minutes</div>
+                  <div className="font-semibold">2 Minutes</div>
                   <div className="text-sm text-muted-foreground">Per level</div>
                 </div>
               </div>
