@@ -39,7 +39,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
   }, [level]);
 
   const calculateScore = useCallback((guess: { lat: number; lng: number }, actual: { lat: number; lng: number }) => {
-    // Placeholder score calculation - you'll implement the real one
+    
     const distance = Math.sqrt(
       Math.pow(guess.lat - actual.lat, 2) + Math.pow(guess.lng - actual.lng, 2)
     );
@@ -145,7 +145,9 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
             <h1 className="text-xl font-bold">GeoLite</h1>
             <span className="text-muted-foreground">Level {level}/3</span>
           </div>
+           {!timeUp && (
           <Timer key={level} duration={120} onTimeUp={handleTimeUp} />
+        )}
         </div>
       </div>
 
