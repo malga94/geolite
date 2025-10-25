@@ -17,12 +17,26 @@ interface GameProps {
   setApiKey: (key: string) => void;
 }
 
+const LEVEL_LOCATIONS = {
+  1: { lat: 48.8584, lng: 2.2945 }, // Eiffel Tower, Paris
+  2: { lat: 41.8902, lng: 12.4922 }, // Colosseum, Rome
+  3: { lat: 29.9792, lng: 31.1342 }, // Pyramids of Giza, Egypt
+};
+
 const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
   const navigate = useNavigate();
   const [guessLocation, setGuessLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [actualLocation] = useState({ lat: 48.8584, lng: 2.2945 }); // Hardcoded: Eiffel Tower for now
+  const [actualLocation, setActualLocation] = useState(LEVEL_LOCATIONS[level as keyof typeof LEVEL_LOCATIONS]);
   const [timeUp, setTimeUp] = useState(false);
   const [hasGuessed, setHasGuessed] = useState(false);
+
+  // Reset state when level changes
+  useEffect(() => {
+    setActualLocation(LEVEL_LOCATIONS[level as keyof typeof LEVEL_LOCATIONS]);
+    setGuessLocation(null);
+    setHasGuessed(false);
+    setTimeUp(false);
+  }, [level]);
 
   const calculateScore = useCallback((guess: { lat: number; lng: number }, actual: { lat: number; lng: number }) => {
     // Placeholder score calculation - you'll implement the real one
@@ -139,6 +153,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
       <div className="absolute bottom-6 right-6 z-10 space-y-3">
         <Card className="p-2 shadow-lg">
           <MiniMap
+            key={level}
             onLocationSelect={setGuessLocation}
             selectedLocation={guessLocation}
             apiKey={apiKey}
