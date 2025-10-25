@@ -102,7 +102,15 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
                 onChange={(e) => setApiKey(e.target.value)}
               />
             </div>
-            <Button onClick={() => apiKey && window.location.reload()} className="w-full">
+            <Button 
+              onClick={() => {
+                if (apiKey) {
+                  navigate(0); // Reload the current route
+                }
+              }} 
+              className="w-full"
+              disabled={!apiKey}
+            >
               Continue
             </Button>
           </div>
