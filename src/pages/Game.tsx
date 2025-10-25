@@ -145,7 +145,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
             <h1 className="text-xl font-bold">GeoLite</h1>
             <span className="text-muted-foreground">Level {level}/3</span>
           </div>
-          <Timer duration={300} onTimeUp={handleTimeUp} />
+          <Timer duration={180} onTimeUp={handleTimeUp} />
         </div>
       </div>
 
