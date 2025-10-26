@@ -17,27 +17,79 @@ interface GameProps {
   setApiKey: (key: string) => void;
 }
 
-const LEVEL_LOCATIONS = {
-  //1: { lat: 48.8584, lng: 2.2945 }, // Eiffel Tower, Paris
-  1: { lat: 45, lng: 9 }, // Eiffel Tower, Paris
-  2: { lat: 41.8902, lng: 12.4922 }, // Colosseum, Rome
-  3: { lat: 29.9792, lng: 31.1342 }, // Pyramids of Giza, Egypt
-};
-
 const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
   const navigate = useNavigate();
   const [guessLocation, setGuessLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [actualLocation, setActualLocation] = useState(LEVEL_LOCATIONS[level as keyof typeof LEVEL_LOCATIONS]);
+  const [actualLocation, setActualLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [timeUp, setTimeUp] = useState(false);
   const [hasGuessed, setHasGuessed] = useState(false);
+  const [totalLocations, setTotalLocations] = useState<number | null>(null);
 
-  // Reset state when level changes
+  const [loadingLocation, setLoadingLocation] = useState(false);
+
+  // Fetch total number of locations once on mount and cache it
   useEffect(() => {
-    setActualLocation(LEVEL_LOCATIONS[level as keyof typeof LEVEL_LOCATIONS]);
+    let mounted = true;
+    async function fetchTotal() {
+      try {
+        const res = await fetch('http://localhost:4000/api/locations/count');
+        if (!res.ok) throw new Error('Failed to fetch locations count');
+        const data = await res.json();
+        if (mounted) setTotalLocations(Number(data.count) || 0);
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to fetch locations count from backend.');
+        if (mounted) setTotalLocations(0);
+      }
+    }
+    fetchTotal();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Reset state and fetch a random location when level changes (after totalLocations is known)
+  useEffect(() => {
+    let mounted = true;
     setGuessLocation(null);
     setHasGuessed(false);
     setTimeUp(false);
-  }, [level]);
+
+    // don't run until we know how many locations there are
+    if (totalLocations === null) return;
+
+    async function fetchRandomLocation() {
+      setLoadingLocation(true);
+
+      if (totalLocations <= 0) {
+        toast.error('No locations available on the backend.');
+        setActualLocation(null);
+        setLoadingLocation(false);
+        return;
+      }
+
+      const rand = Math.floor(Math.random() * totalLocations);
+
+      try {
+        const res = await fetch(`http://localhost:4000/api/locations/${rand}`);
+        if (!res.ok) throw new Error(`Failed to fetch location ${rand}`);
+        const data = await res.json();
+        if (mounted) setActualLocation({ lat: data.lat, lng: data.lng });
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to load level location.');
+        if (mounted) setActualLocation(null);
+      } finally {
+        if (mounted) setLoadingLocation(false);
+      }
+    }
+
+    fetchRandomLocation();
+
+    return () => {
+      mounted = false;
+    };
+  }, [level, totalLocations]);
 
   const calculateScore = useCallback((guess: { lat: number; lng: number }, actual: { lat: number; lng: number }) => {
     
@@ -52,6 +104,11 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
   const handleGuess = useCallback(() => {
     if (!guessLocation) {
       toast.error("Please select a location on the map!");
+      return;
+    }
+
+    if (!actualLocation) {
+      toast.error("Actual location not loaded yet.");
       return;
     }
 
@@ -133,7 +190,16 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
       </div>
     );
   }
-
+  if (loadingLocation || !actualLocation) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-6 text-center">
+          <h2 className="text-xl font-semibold mb-2">Loading level...</h2>
+          <p className="text-sm text-muted-foreground">Fetching a random location for this level.</p>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="relative h-screen w-screen overflow-hidden">
       {/* Street View Panorama */}
@@ -143,7 +209,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
       <div className="absolute top-0 left-0 right-0 z-10 bg-card/90 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold">GeoLite</h1>
+            <h1 className="text-xl font-bold"><a href='/'>GeoLite</a></h1>
             <span className="text-muted-foreground">Level {level}/3</span>
           </div>
            {!timeUp && (

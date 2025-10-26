@@ -1,0 +1,19 @@
+{
+  "name": "streetview-snap-backend",
+  "version": "0.1.0",
+  "description": "Minimal backend to serve locations.json for the Streetview Snap frontend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
