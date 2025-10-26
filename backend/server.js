@@ -38,9 +38,9 @@ app.use((req, res, next) => {
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// returns full array of locations
-app.get('/api/locations', (req, res) => {
-  res.json(locations);
+// returns the number of available locations
+app.get('/api/locations/count', (req, res) => {
+  res.json({ count: locations.length });
 });
 
 // returns a single location by numeric id (index from file)
