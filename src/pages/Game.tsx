@@ -18,7 +18,8 @@ interface GameProps {
 }
 
 const LEVEL_LOCATIONS = {
-  1: { lat: 48.8584, lng: 2.2945 }, // Eiffel Tower, Paris
+  //1: { lat: 48.8584, lng: 2.2945 }, // Eiffel Tower, Paris
+  1: { lat: 45, lng: 9 }, // Eiffel Tower, Paris
   2: { lat: 41.8902, lng: 12.4922 }, // Colosseum, Rome
   3: { lat: 29.9792, lng: 31.1342 }, // Pyramids of Giza, Egypt
 };

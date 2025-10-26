@@ -8,7 +8,7 @@ interface TimerProps {
 
 const Timer = ({ duration, onTimeUp }: TimerProps) => {
   const [timeLeft, setTimeLeft] = useState(duration);
-  console.log("Timer mounted for level");
+  
   useEffect(() => {
     const interval = setInterval(() => {
     setTimeLeft(prev => {
