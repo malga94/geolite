@@ -9,6 +9,9 @@ import MiniMap from "@/components/MiniMap";
 import Timer from "@/components/Timer";
 import { toast } from "sonner";
 
+// Use env var for API url if provided
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 interface GameProps {
   level: number;
   scores: number[];
@@ -27,12 +30,20 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
 
   const [loadingLocation, setLoadingLocation] = useState(false);
 
+  // On mount, check for API key in env (if provided)
+  useEffect(() => {
+    const envKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    if (envKey && !apiKey) {
+      setApiKey(envKey);
+    }
+  }, [apiKey, setApiKey]);
+
   // Fetch total number of locations once on mount and cache it
   useEffect(() => {
     let mounted = true;
     async function fetchTotal() {
       try {
-        const res = await fetch('http://localhost:4000/api/locations/count');
+        const res = await fetch(`${API_URL}/api/locations/count`);
         if (!res.ok) throw new Error('Failed to fetch locations count');
         const data = await res.json();
         if (mounted) setTotalLocations(Number(data.count) || 0);
@@ -71,7 +82,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
       const rand = Math.floor(Math.random() * totalLocations);
 
       try {
-        const res = await fetch(`http://localhost:4000/api/locations/${rand}`);
+        const res = await fetch(`${API_URL}/api/locations/${rand}`);
         if (!res.ok) throw new Error(`Failed to fetch location ${rand}`);
         const data = await res.json();
         if (mounted) setActualLocation({ lat: data.lat, lng: data.lng });
