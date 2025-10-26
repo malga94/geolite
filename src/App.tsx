@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Score from "./pages/Score";
+import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/how-to-play" element={<HowToPlay />} />
             <Route
               path="/game/1"
               element={<Game level={1} scores={scores} setScores={setScores} apiKey={apiKey} setApiKey={handleSetApiKey} />}

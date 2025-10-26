@@ -40,6 +40,7 @@ const Index = () => {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={() => navigate("/how-to-play")}
                 className="font-semibold text-lg px-8 py-6"
               >
                 How to Play
