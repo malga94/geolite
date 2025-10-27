@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, MapPin } from "lucide-react";
+import confetti from "canvas-confetti";
 
 interface ScoreProps {
   scores: number[];
@@ -13,6 +15,36 @@ const Score = ({ scores, resetGame }: ScoreProps) => {
   const totalScore = scores.reduce((sum, score) => sum + score, 0);
   const maxScore = 15000; // 3 levels × 5000 max points
   const percentage = Math.round((totalScore / maxScore) * 100);
+
+  useEffect(() => {
+    if (totalScore > 14500) {
+      const duration = 3000;
+      const end = Date.now() + duration;
+
+      const colors = ["#1e40af", "#16a34a", "#f59e0b"];
+
+      (function frame() {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: colors,
+        });
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: colors,
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    }
+  }, [totalScore]);
 
   const handlePlayAgain = () => {
     resetGame();
