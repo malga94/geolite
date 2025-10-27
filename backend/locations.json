@@ -118,5 +118,17 @@
     "lng": -70.642667,
     "difficulty": "easy",
     "pluscode": "G9P4+QWW Santiago, Chile"
+  },
+  {
+    "lat": 43.485694, 
+    "lng": 11.376438,
+    "difficulty": "medium",
+    "pluscode": "F9PG+7HG Radda in Chianti, Province of Siena, Italy"
+  },
+  {
+    "lat": 40.839836, 
+    "lng": 8.417013,
+    "difficulty": "medium",
+    "pluscode": "RCQ8+WRJ Porto Torres, Province of Sassari, Italy"
   }
 ]
