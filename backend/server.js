@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 4000;
 const DATA_PATH = path.join(__dirname, 'locations.json');
 
 let locations = [];
+let selected_locations = [];
 
 function loadData() {
   try {
@@ -41,6 +42,19 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 // returns the number of available locations
 app.get('/api/locations/count', (req, res) => {
   res.json({ count: locations.length });
+});
+
+app.get('/api/locations/random', (req, res) => {
+  if (selected_locations.length === 3) {
+    selected_locations = [];
+  }
+  let rand = Math.floor(Math.random() * locations.length);
+  while (selected_locations.includes(rand)) {
+    rand = Math.floor(Math.random() * locations.length);
+  }
+  const loc = locations.find((l) => l.id === rand);
+  res.json(loc);
+  selected_locations.push(rand);
 });
 
 // returns a single location by numeric id (index from file)

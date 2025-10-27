@@ -79,11 +79,9 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
         return;
       }
 
-      const rand = Math.floor(Math.random() * totalLocations);
-
       try {
-        const res = await fetch(`${API_URL}/api/locations/${rand}`);
-        if (!res.ok) throw new Error(`Failed to fetch location ${rand}`);
+        const res = await fetch(`${API_URL}/api/locations/random`);
+        if (!res.ok) throw new Error(`Failed to fetch location`);
         const data = await res.json();
         if (mounted) setActualLocation({ lat: data.lat, lng: data.lng });
       } catch (err) {
@@ -112,7 +110,7 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
     return score;
   }, []);
 
-  const handleGuess = useCallback(() => {
+    const handleGuess = useCallback(() => {
     if (!guessLocation) {
       toast.error("Please select a location on the map!");
       return;
@@ -128,17 +126,17 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
     setScores(newScores);
     setHasGuessed(true);
 
-    toast.success(`You scored ${score} points!`);
-
-    setTimeout(() => {
-      if (level < 3) {
-        navigate(`/game/${level + 1}`);
-      } else {
-        navigate("/score");
+    navigate('/distance', {
+      state: {
+        guessLocation,
+        actualLocation,
+        level,
+        score,
+        timeUp: false
       }
-    }, 2000);
-  }, [guessLocation, actualLocation, calculateScore, scores, setScores, level, navigate]);
-
+    });
+  }, [guessLocation, actualLocation, calculateScore, scores, setScores, level, navigate]);    
+  
   const handleTimeUp = useCallback(() => {
     if (hasGuessed) return;
     
@@ -146,17 +144,17 @@ const Game = ({ level, scores, setScores, apiKey, setApiKey }: GameProps) => {
     const newScores = [...scores, 0];
     setScores(newScores);
     
-    toast.error("Time's up! Moving to next level...");
+    toast.error("Time's up! You get 0 points");
     
-    setTimeout(() => {
-      if (level < 3) {
-        navigate(`/game/${level + 1}`);
-      } else {
-        navigate("/score");
+    navigate('/distance', {
+      state: {
+        timeUp: true,
+        level,
+        score: 0
       }
-    }, 2000);
-  }, [scores, setScores, level, navigate, hasGuessed]);
-
+    });
+  }, [scores, setScores, level, navigate, hasGuessed]);  
+  
   if (!apiKey) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
