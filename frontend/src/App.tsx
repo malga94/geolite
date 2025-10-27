@@ -9,6 +9,7 @@ import Game from "./pages/Game";
 import Score from "./pages/Score";
 import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
+import Distance from "./pages/Distance";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,10 @@ const App = () => {
               element={<Game level={3} scores={scores} setScores={setScores} apiKey={apiKey} setApiKey={handleSetApiKey} />}
             />
             <Route path="/score" element={<Score scores={scores} resetGame={resetGame} />} />
+            <Route 
+              path="/distance" 
+              element={<Distance apiKey={apiKey} />} 
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
