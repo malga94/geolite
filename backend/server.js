@@ -1,10 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { OAuth2Client } = require('google-auth-library');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const DATA_PATH = path.join(__dirname, 'locations.json');
+
+// Initialize Google OAuth client
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// Middleware to parse JSON bodies
+app.use(express.json());
 
 let locations = [];
 let selected_locations = [];
@@ -31,13 +39,57 @@ loadData();
 // minimal CORS for local development
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+// Google OAuth verification endpoint
+app.post('/api/auth/google', async (req, res) => {
+  const { credential } = req.body;
+
+  if (!credential) {
+    return res.status(400).json({ error: 'No credential provided' });
+  }
+
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    console.error('GOOGLE_CLIENT_ID is not set in environment variables');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  try {
+    // Verify the token with Google
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    // Extract user information
+    const user = {
+      sub: payload.sub, // Google's unique user ID
+      email: payload.email,
+      name: payload.name,
+      picture: payload.picture,
+      email_verified: payload.email_verified,
+    };
+
+    // Here you could:
+    // 1. Save user to database
+    // 2. Create a session
+    // 3. Generate your own JWT token
+    // For now, we just return the verified user info
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error verifying Google token:', error);
+    res.status(401).json({ error: 'Invalid token' });
+  }
+});
 
 // returns the number of available locations
 app.get('/api/locations/count', (req, res) => {
