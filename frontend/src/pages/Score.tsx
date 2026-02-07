@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, MapPin } from "lucide-react";
 import confetti from "canvas-confetti";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 interface ScoreProps {
   scores: number[];
@@ -12,9 +16,53 @@ interface ScoreProps {
 
 const Score = ({ scores, resetGame }: ScoreProps) => {
   const navigate = useNavigate();
+  const { isAuthenticated, credential } = useAuth();
+  const { toast } = useToast();
+  const [scoreSaved, setScoreSaved] = useState(false);
   const totalScore = scores.reduce((sum, score) => sum + score, 0);
   const maxScore = 15000; // 3 levels × 5000 max points
   const percentage = Math.round((totalScore / maxScore) * 100);
+
+  // Save score to backend if user is logged in
+  useEffect(() => {
+    if (isAuthenticated && credential && !scoreSaved) {
+      const saveScore = async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/scores`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              credential,
+              score: totalScore,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Failed to save score');
+          }
+
+          setScoreSaved(true);
+          toast({
+            title: 'Score Saved!',
+            description: 'Your score has been saved to your account.',
+          });
+        } catch (error) {
+          console.error('Error saving score:', error);
+          toast({
+            title: 'Failed to save score',
+            description: 'Unable to save your score. Please try logging in again.',
+            variant: 'destructive',
+          });
+        }
+      };
+
+      saveScore();
+    }
+  }, [isAuthenticated, credential, totalScore, scoreSaved, toast]);
 
   useEffect(() => {
     if (totalScore > 14500) {

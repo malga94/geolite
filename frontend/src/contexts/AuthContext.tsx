@@ -13,23 +13,29 @@ interface AuthContextType {
   login: (credential: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  credential: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [credential, setCredential] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Check for saved user on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
+    const savedCredential = localStorage.getItem('credential');
+
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
+        setCredential(savedCredential);
       } catch (error) {
         console.error('Failed to parse saved user:', error);
         localStorage.removeItem('user');
+        localStorage.removeItem('credential');
       }
     }
     setIsLoading(false);
@@ -62,7 +68,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       setUser(userData);
+      setCredential(credential);
       localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('credential', credential);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -73,7 +81,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
+    setCredential(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('credential');
 
     // Sign out from Google
     if (window.google) {
@@ -89,6 +99,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         logout,
         isLoading,
+        credential,
       }}
     >
       {children}
