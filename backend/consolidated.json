@@ -2916,123 +2916,183 @@
     "difficulty": "medium"
   },
   {
-        "lat": 45.46223945036947,
-        "lng": 9.137561228560836,
-        "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ3ktT25FT1E.",
-        "date": "2021-01"
-    },
-    {
-        "lat": 45.75117170367983,
-        "lng": 4.826270939919172,
-        "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ0VtTC1kSVE.",
-        "date": "2015-12"
-    },
-    {
-        "lat": 43.26252732128125,
-        "lng": -2.934989042449104,
-        "pano_id": "pYZnC2F_VNVVQd5FS5duQQ",
-        "date": "2012-07"
-    },
-    {
-        "lat": 42.57930373002547,
-        "lng": -2.824609655257161,
-        "pano_id": "ysy-KkQJUV2J4qy8IfY48Q",
-        "date": "2012-10"
-    },
-    {
-        "lat": 56.95944013574403,
-        "lng": 24.12694419889372,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRDQ0dWFXemdF",
-        "date": "2017-01"
-    },
-    {
-        "lat": 18.92230916696472,
-        "lng": 72.83431101443949,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREU4OGE4ekFF",
-        "date": "2017-06"
-    },
-    {
-        "lat": 9.706214848101396,
-        "lng": 76.4187652233268,
-        "pano_id": "OgTI2mT8cxP2_SNhYyZSMQ",
-        "date": "2023-06"
-    },
-    {
-        "lat": 23.70227502469691,
-        "lng": 80.31327673938665,
-        "pano_id": "Qp6G_WVQ2_VnksBKsZMicw",
-        "date": "2024-04"
-    },
-    {
-        "lat": 13.66098011476723,
-        "lng": 102.5649419042165,
-        "pano_id": "g3OcZPrMpxFJTYXldw1ZeQ",
-        "date": "2023-02"
-    },
-    {
-        "lat": 21.03677709848262,
-        "lng": 105.8346461725162,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREU4UFdqMndF",
-        "date": "2018-02"
-    },
-    {
-        "lat": 35.69450287486551,
-        "lng": 139.7018131773523,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREVxcXVKOVFF",
-        "date": "2017-06"
-    },
-    {
-        "lat": 35.53491242178736,
-        "lng": 134.190754673491,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRGMwOWZnaUFF",
-        "date": "2015-03"
-    },
-    {
-        "lat": -35.10035747798902,
-        "lng": 147.3499280989392,
-        "pano_id": "uJt8um60kvXg7RkCtig1Eg",
-        "date": "2025-03"
-    },
-    {
-        "lat": -33.86638171354807,
-        "lng": 151.2016994609686,
-        "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQzR5X2FsVFE.",
-        "date": "2016-10"
-    },
-    {
-        "lat": -44.00119197526099,
-        "lng": 170.4425012912436,
-        "pano_id": "PacwjbVZxWRdRvprRGUsRQ",
-        "date": "2023-11"
-    },
-    {
-        "lat": -10.9326434985123,
-        "lng": -37.06020823094239,
-        "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ3lfNVhNWVE.",
-        "date": "2021-02"
-    },
-    {
-        "lat": -22.96777392606754,
-        "lng": -43.17833111303423,
-        "pano_id": "FcEReE2vb2xOlU8hjQDp8g",
-        "date": "2016-03"
-    },
-    {
-        "lat": -33.46341832917313,
-        "lng": -70.64648008740966,
-        "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRHFwZE9icHdF",
-        "date": "2019-12"
-    },
-    {
-        "lat": 43.48569042240882,
-        "lng": 11.37642477198671,
-        "pano_id": "qFWsH8y2Hxet4Xni2vSSmw",
-        "date": "2024-10"
-    },
-    {
-        "lat": 40.83975988956211,
-        "lng": 8.417021402047311,
-        "pano_id": "7xb-g7tIhoqMUP2sVDlm7w",
-        "date": "2023-08"
-    }
+    "id": 324,
+    "lat": 45.46223945036947,
+    "lng": 9.137561228560836,
+    "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ3ktT25FT1E.",
+    "date": "2021-01",
+    "region": "Italy",
+    "difficulty": "medium"
+  },
+  {
+    "id": 325,
+    "lat": 45.75117170367983,
+    "lng": 4.826270939919172,
+    "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ0VtTC1kSVE.",
+    "date": "2015-12",
+    "region": "France",
+    "difficulty": "easy"
+  },
+  {
+    "id": 326,
+    "lat": 43.26252732128125,
+    "lng": -2.934989042449104,
+    "pano_id": "pYZnC2F_VNVVQd5FS5duQQ",
+    "date": "2012-07",
+    "region": "Iberia",
+    "difficulty": "medium"
+  },
+  {
+    "id": 327,
+    "lat": 42.57930373002547,
+    "lng": -2.824609655257161,
+    "pano_id": "ysy-KkQJUV2J4qy8IfY48Q",
+    "date": "2012-10",
+    "region": "Iberia",
+    "difficulty": "medium"
+  },
+  {
+    "id": 328,
+    "lat": 56.95944013574403,
+    "lng": 24.12694419889372,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRDQ0dWFXemdF",
+    "date": "2017-01", 
+    "region": "Scandinavia",
+    "difficulty": "medium"
+  },
+  {
+    "id": 329,
+    "lat": 18.92230916696472,
+    "lng": 72.83431101443949,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREU4OGE4ekFF",
+    "date": "2017-06",
+    "region": "India West",
+    "difficulty": "easy"
+  },
+  {
+    "id": 330,
+    "lat": 9.706214848101396,
+    "lng": 76.4187652233268,
+    "pano_id": "OgTI2mT8cxP2_SNhYyZSMQ",
+    "date": "2023-06",
+    "region": "India West",
+    "difficulty": "medium"
+  },
+  {
+    "id": 331,
+    "lat": 23.70227502469691,
+    "lng": 80.31327673938665,
+    "pano_id": "Qp6G_WVQ2_VnksBKsZMicw",
+    "date": "2024-04",
+    "region": "India West",
+    "difficulty": "hard"
+  },
+  {
+    "id": 332,
+    "lat": 13.66098011476723,
+    "lng": 102.5649419042165,
+    "pano_id": "g3OcZPrMpxFJTYXldw1ZeQ",
+    "date": "2023-02",
+    "region": "Thailand and Vietnam",
+    "difficulty": "hard"
+  },
+  {
+    "id": 333,
+    "lat": 21.03677709848262,
+    "lng": 105.8346461725162,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREU4UFdqMndF",
+    "date": "2018-02",
+    "region": "Thailand and Vietnam",
+    "difficulty": "easy"
+  },
+  {
+    "id": 334,
+    "lat": 35.69450287486551,
+    "lng": 139.7018131773523,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJREVxcXVKOVFF",
+    "date": "2017-06",
+    "region": "Japan",
+    "difficulty": "easy"
+  },
+  {
+    "id": 335,
+    "lat": 35.53491242178736,
+    "lng": 134.190754673491,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRGMwOWZnaUFF",
+    "date": "2015-03",
+    "region": "Japan",
+    "difficulty": "medium"
+  },
+  {
+    "id": 336,
+    "lat": -35.10035747798902,
+    "lng": 147.3499280989392,
+    "pano_id": "uJt8um60kvXg7RkCtig1Eg",
+    "date": "2025-03",
+    "region": "Southeast Australia",
+    "difficulty": "medium"
+  },
+  {
+    "id": 337,
+    "lat": -33.86638171354807,
+    "lng": 151.2016994609686,
+    "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQzR5X2FsVFE.",
+    "date": "2016-10",
+    "region": "Southeast Australia",  
+    "difficulty": "easy"
+  },
+  {
+    "id": 338,
+    "lat": -44.00119197526099,
+    "lng": 170.4425012912436,
+    "pano_id": "PacwjbVZxWRdRvprRGUsRQ",
+    "date": "2023-11",
+    "region": "New Zealand",
+    "difficulty": "hard"
+  },
+  {
+    "id": 339,
+    "lat": -10.9326434985123,
+    "lng": -37.06020823094239,
+    "pano_id": "CAoSFkNJSE0wb2dLRUlDQWdJQ3lfNVhNWVE.",
+    "date": "2021-02",
+    "region": "Brazil",
+    "difficulty": "hard"
+  },
+  {
+    "id": 340,
+    "lat": -22.96777392606754,
+    "lng": -43.17833111303423,
+    "pano_id": "FcEReE2vb2xOlU8hjQDp8g",
+    "date": "2016-03",
+    "region": "Brazil",
+    "difficulty": "easy"
+  },
+  {
+    "id": 341,
+    "lat": -33.46341832917313,
+    "lng": -70.64648008740966,
+    "pano_id": "CAoSF0NJSE0wb2dLRUlDQWdJRHFwZE9icHdF",
+    "date": "2019-12",
+    "region": "Argentina and Chile",
+    "difficulty": "easy"
+  },
+  {
+    "id": 342,
+    "lat": 43.48569042240882,
+    "lng": 11.37642477198671,
+    "pano_id": "qFWsH8y2Hxet4Xni2vSSmw",
+    "date": "2024-10",
+    "region": "Italy",
+    "difficulty": "medium"
+  },
+  {
+    "id": 343,
+    "lat": 40.83975988956211,
+    "lng": 8.417021402047311,
+    "pano_id": "7xb-g7tIhoqMUP2sVDlm7w",
+    "date": "2023-08",
+    "region": "Italy",
+    "difficulty": "medium"
+  }
 ]
