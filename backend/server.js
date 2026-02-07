@@ -6,7 +6,7 @@ const { OAuth2Client } = require('google-auth-library');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const DATA_PATH = path.join(__dirname, 'locations.json');
+const DATA_PATH = path.join(__dirname, 'locations_prod.json');
 
 // Initialize Google OAuth client
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
