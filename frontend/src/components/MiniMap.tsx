@@ -10,16 +10,16 @@ const MiniMap = ({ onLocationSelect, selectedLocation, apiKey }: MiniMapProps) =
   const mapRef = useRef<HTMLDivElement>(null);
   const markerRef = useRef<any>(null);
   const mapInstanceRef = useRef<any>(null);
-  const [isLoaded, setIsLoaded] = useState(!!window.google);
+  const [isLoaded, setIsLoaded] = useState(!!window.google?.maps);
 
   useEffect(() => {
-    if (window.google) {
+    if (window.google?.maps) {
       setIsLoaded(true);
       return;
     }
 
     const checkGoogleMaps = setInterval(() => {
-      if (window.google) {
+      if (window.google?.maps) {
         setIsLoaded(true);
         clearInterval(checkGoogleMaps);
       }
@@ -29,7 +29,7 @@ const MiniMap = ({ onLocationSelect, selectedLocation, apiKey }: MiniMapProps) =
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || !isLoaded || !window.google || mapInstanceRef.current) return;
+    if (!mapRef.current || !isLoaded || !window.google?.maps || mapInstanceRef.current) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: 20, lng: 0 },

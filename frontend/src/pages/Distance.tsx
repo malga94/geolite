@@ -52,7 +52,7 @@ if (guessLocation && actualLocation) {
   );
 
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!mapRef.current || !window.google?.maps) return;
 
     // Calculate bounds to fit both points
     const bounds = new window.google.maps.LatLngBounds();
