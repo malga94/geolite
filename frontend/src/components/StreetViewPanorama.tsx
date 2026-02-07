@@ -10,7 +10,7 @@ const StreetViewPanorama = ({ location, apiKey }: StreetViewPanoramaProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (window.google) {
+    if (window.google?.maps) {
       setIsLoaded(true);
       return;
     }
@@ -31,7 +31,7 @@ const StreetViewPanorama = ({ location, apiKey }: StreetViewPanoramaProps) => {
   }, [apiKey]);
 
   useEffect(() => {
-    if (!panoramaRef.current || !isLoaded || !window.google) return;
+    if (!panoramaRef.current || !isLoaded || !window.google?.maps) return;
 
     const panorama = new window.google.maps.StreetViewPanorama(panoramaRef.current, {
       position: location,
