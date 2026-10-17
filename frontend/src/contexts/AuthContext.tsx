@@ -5,6 +5,7 @@ export interface User {
   name: string;
   picture?: string;
   sub: string; // Google's unique user ID
+  nickname: string | null; // public name shown on the leaderboard
 }
 
 interface AuthContextType {
@@ -12,11 +13,25 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (credential: string) => Promise<void>;
   logout: () => void;
+  updateNickname: (nickname: string) => Promise<void>;
   isLoading: boolean;
   credential: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
+// Google ID tokens expire after ~1 hour; once expired the backend rejects them,
+// so treat the user as signed out.
+const isCredentialExpired = (credential: string) => {
+  try {
+    const payload = JSON.parse(atob(credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return payload.exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
+};
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -28,15 +43,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const savedUser = localStorage.getItem('user');
     const savedCredential = localStorage.getItem('credential');
 
-    if (savedUser) {
+    if (savedUser && savedCredential && !isCredentialExpired(savedCredential)) {
       try {
-        setUser(JSON.parse(savedUser));
+        setUser({ nickname: null, ...JSON.parse(savedUser) });
         setCredential(savedCredential);
       } catch (error) {
         console.error('Failed to parse saved user:', error);
         localStorage.removeItem('user');
         localStorage.removeItem('credential');
       }
+    } else {
+      localStorage.removeItem('user');
+      localStorage.removeItem('credential');
     }
     setIsLoading(false);
   }, []);
@@ -46,8 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsLoading(true);
 
       // Send credential to backend for verification
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-      const response = await fetch(`${apiUrl}/api/auth/google`, {
+      const response = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,6 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         name: data.name,
         picture: data.picture,
         sub: data.sub,
+        nickname: data.nickname,
       };
 
       setUser(userData);
@@ -91,13 +109,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateNickname = async (nickname: string) => {
+    if (!user || !credential) {
+      throw new Error('You need to be signed in to set a nickname');
+    }
+
+    const response = await fetch(`${API_URL}/api/users/nickname`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ credential, nickname }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to save nickname');
+    }
+
+    const userData: User = { ...user, nickname: data.nickname };
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && !!credential && !isCredentialExpired(credential),
         login,
         logout,
+        updateNickname,
         isLoading,
         credential,
       }}

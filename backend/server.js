@@ -3,7 +3,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { OAuth2Client } = require('google-auth-library');
-const { saveScore, getUserScores, getTopScores } = require('./db');
+const { saveScore, getUserScores, getTopScores, getNickname, setNickname } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -48,80 +48,96 @@ app.use((req, res, next) => {
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Google OAuth verification endpoint
-app.post('/api/auth/google', async (req, res) => {
-  const { credential } = req.body;
+const MAX_SCORE = 15000; // 3 levels × 5000 max points
+const NICKNAME_PATTERN = /^[\p{L}\p{N} _.-]{3,20}$/u;
 
+/**
+ * Verify a Google ID token and return its payload.
+ * Sends the error response itself and returns null on failure.
+ */
+async function verifyCredential(credential, res) {
   if (!credential) {
-    return res.status(400).json({ error: 'No credential provided' });
+    res.status(400).json({ error: 'No credential provided' });
+    return null;
   }
 
   if (!process.env.GOOGLE_CLIENT_ID) {
     console.error('GOOGLE_CLIENT_ID is not set in environment variables');
-    return res.status(500).json({ error: 'Server configuration error' });
+    res.status(500).json({ error: 'Server configuration error' });
+    return null;
   }
 
   try {
-    // Verify the token with Google
     const ticket = await googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const payload = ticket.getPayload();
 
-    // Extract user information
-    const user = {
-      sub: payload.sub, // Google's unique user ID
-      email: payload.email,
-      name: payload.name,
-      picture: payload.picture,
-      email_verified: payload.email_verified,
-    };
+    if (!payload.email) {
+      res.status(400).json({ error: 'Email not found in token' });
+      return null;
+    }
 
-    // Here you could:
-    // 1. Save user to database
-    // 2. Create a session
-    // 3. Generate your own JWT token
-    // For now, we just return the verified user info
-
-    res.json(user);
+    return payload;
   } catch (error) {
     console.error('Error verifying Google token:', error);
     res.status(401).json({ error: 'Invalid token' });
+    return null;
+  }
+}
+
+// Google OAuth verification endpoint
+app.post('/api/auth/google', async (req, res) => {
+  const payload = await verifyCredential(req.body.credential, res);
+  if (!payload) return;
+
+  res.json({
+    sub: payload.sub, // Google's unique user ID
+    email: payload.email,
+    name: payload.name,
+    picture: payload.picture,
+    email_verified: payload.email_verified,
+    nickname: getNickname(payload.email),
+  });
+});
+
+// Set or change the user's public nickname - requires authentication
+app.post('/api/users/nickname', async (req, res) => {
+  const nickname = typeof req.body.nickname === 'string' ? req.body.nickname.trim() : '';
+
+  if (!NICKNAME_PATTERN.test(nickname)) {
+    return res.status(400).json({
+      error: 'Nickname must be 3-20 characters: letters, numbers, spaces, _ . -',
+    });
+  }
+
+  const payload = await verifyCredential(req.body.credential, res);
+  if (!payload) return;
+
+  try {
+    if (!setNickname(payload.email, nickname)) {
+      return res.status(409).json({ error: 'Nickname is already taken' });
+    }
+    res.json({ success: true, nickname });
+  } catch (error) {
+    console.error('Error saving nickname:', error);
+    res.status(500).json({ error: 'Failed to save nickname' });
   }
 });
 
 // Save score endpoint - requires authentication
 app.post('/api/scores', async (req, res) => {
-  const { credential, score } = req.body;
+  const { score } = req.body;
 
-  if (!credential) {
-    return res.status(400).json({ error: 'No credential provided' });
-  }
-
-  if (typeof score !== 'number' || score < 0) {
+  if (typeof score !== 'number' || score < 0 || score > MAX_SCORE) {
     return res.status(400).json({ error: 'Invalid score value' });
   }
 
-  if (!process.env.GOOGLE_CLIENT_ID) {
-    console.error('GOOGLE_CLIENT_ID is not set in environment variables');
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
+  const payload = await verifyCredential(req.body.credential, res);
+  if (!payload) return;
 
   try {
-    // Verify the token with Google
-    const ticket = await googleClient.verifyIdToken({
-      idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-
-    if (!payload.email) {
-      return res.status(400).json({ error: 'Email not found in token' });
-    }
-
     // Save the score with hashed email
     const savedScore = saveScore(payload.email, score);
 
@@ -135,53 +151,31 @@ app.post('/api/scores', async (req, res) => {
     });
   } catch (error) {
     console.error('Error saving score:', error);
-    res.status(401).json({ error: 'Invalid token or failed to save score' });
+    res.status(500).json({ error: 'Failed to save score' });
   }
 });
 
-// Get user scores endpoint - requires authentication
+// Get the current user's best scores - requires authentication
 app.post('/api/scores/user', async (req, res) => {
-  const { credential } = req.body;
-
-  if (!credential) {
-    return res.status(400).json({ error: 'No credential provided' });
-  }
-
-  if (!process.env.GOOGLE_CLIENT_ID) {
-    console.error('GOOGLE_CLIENT_ID is not set in environment variables');
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
+  const payload = await verifyCredential(req.body.credential, res);
+  if (!payload) return;
 
   try {
-    // Verify the token with Google
-    const ticket = await googleClient.verifyIdToken({
-      idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-
-    if (!payload.email) {
-      return res.status(400).json({ error: 'Email not found in token' });
-    }
-
-    // Get user's scores
-    const scores = getUserScores(payload.email);
-
+    const limit = Math.min(parseInt(req.body.limit) || 10, 100);
     res.json({
       success: true,
-      scores: scores
+      scores: getUserScores(payload.email, limit)
     });
   } catch (error) {
     console.error('Error fetching user scores:', error);
-    res.status(401).json({ error: 'Invalid token or failed to fetch scores' });
+    res.status(500).json({ error: 'Failed to fetch scores' });
   }
 });
 
-// Get top scores - public endpoint
+// Get top scores (best score per player) - public endpoint
 app.get('/api/scores/top', (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
     const topScores = getTopScores(limit);
 
     res.json({

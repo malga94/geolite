@@ -33,3 +33,5 @@ dist-ssr
 /backend/generated_coordinates
 /backend/utils
 /backend/config
+/backend/scores.db
+cache/

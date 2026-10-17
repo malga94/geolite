@@ -51,12 +51,8 @@ const Score = ({ scores, resetGame }: ScoreProps) => {
             description: 'Your score has been saved to your account.',
           });
         } catch (error) {
+          // Don't bother the player: the score is simply not saved
           console.error('Error saving score:', error);
-          toast({
-            title: 'Failed to save score',
-            description: 'Unable to save your score. Please try logging in again.',
-            variant: 'destructive',
-          });
         }
       };
 

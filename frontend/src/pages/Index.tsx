@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MapPin, Globe2, Target, LogOut } from "lucide-react";
 import heroImage from "@/assets/hero-globe.jpg";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
+import { NicknameDialog } from "@/components/NicknameDialog";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
+  const [isNicknameDialogOpen, setIsNicknameDialogOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-secondary/5">
@@ -25,7 +28,14 @@ const Index = () => {
                   referrerPolicy="no-referrer"
                 />
               )}
-              <span className="text-sm font-medium">{user.name}</span>
+              <button
+                type="button"
+                onClick={() => setIsNicknameDialogOpen(true)}
+                className="text-sm font-medium hover:underline"
+                title="Change nickname"
+              >
+                {user.nickname ?? user.name}
+              </button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -45,6 +55,8 @@ const Index = () => {
             </div>
           )}
         </div>
+
+        <NicknameDialog open={isNicknameDialogOpen} onOpenChange={setIsNicknameDialogOpen} />
 
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
           {/* Left Content */}
@@ -73,6 +85,14 @@ const Index = () => {
                   className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all"
                 >
                   Start Game
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate("/highscores")}
+                  className="font-semibold text-lg px-8 py-6"
+                >
+                  Highscores
                 </Button>
                 <Button
                   size="lg"
