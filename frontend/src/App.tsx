@@ -5,12 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { NicknamePrompt } from "@/components/NicknameDialog";
 import Index from "./pages/Index";
 import Game from "./pages/Game";
 import Score from "./pages/Score";
 import HowToPlay from "./pages/HowToPlay";
 import NotFound from "./pages/NotFound";
 import Distance from "./pages/Distance";
+import HighScores from "./pages/HighScores";
 
 const queryClient = new QueryClient();
 
@@ -35,10 +37,12 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <NicknamePrompt />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/how-to-play" element={<HowToPlay />} />
+              <Route path="/highscores" element={<HighScores />} />
               <Route
                 path="/game/1"
                 element={<Game level={1} scores={scores} setScores={setScores} apiKey={apiKey} setApiKey={handleSetApiKey} />}
